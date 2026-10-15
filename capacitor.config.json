@@ -1,0 +1,6 @@
+{
+  "appId": "com.tactical.urlhub",
+  "appName": "URLHub",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

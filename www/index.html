@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URLHub — Органайзер посилань</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            darkbg: '#080a0e',
+                            cardbg: '#12161f',
+                            bordercol: '#262d3d',
+                            crimson: '#b91c1c',
+                            crimsonglow: '#dc2626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #080a0e;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 28px 28px;
+            color: #cbd5e1;
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+        }
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        button { cursor: pointer; }
+
+        /* Контурний стиль карток як на фото */
+        .cyber-card {
+            background-color: #12161f;
+            border: 1.5px solid #262d3d;
+            border-radius: 16px;
+            transition: all 0.25s ease;
+        }
+        .cyber-card:hover {
+            border-color: #b91c1c;
+            box-shadow: 0 0 16px rgba(185, 28, 28, 0.28), inset 0 0 8px rgba(185, 28, 28, 0.08);
+            transform: translateY(-2px);
+        }
+        .cyber-icon-box {
+            background-color: #161b26;
+            border: 1.5px solid #2a3241;
+            border-radius: 14px;
+            transition: all 0.25s ease;
+        }
+        .cyber-card:hover .cyber-icon-box,
+        .icon-option.selected {
+            border-color: #dc2626;
+            box-shadow: 0 0 12px rgba(220, 38, 38, 0.35);
+            background-color: #1c161b;
+        }
+        .cyber-btn-red {
+            background-color: rgba(153, 27, 27, 0.2);
+            border: 1.5px solid #991b1b;
+            color: #f87171;
+            transition: all 0.25s ease;
+        }
+        .cyber-btn-red:hover {
+            background-color: rgba(185, 28, 28, 0.35);
+            border-color: #dc2626;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
+            color: #ffffff;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080a0e; }
+        ::-webkit-scrollbar-thumb { background: #262d3d; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #991b1b; }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-6{bottom:1.5rem}.left-3{left:0.75rem}.right-6{right:1.5rem}.top-0{top:0px}.top-2\.5{top:0.625rem}.z-10{z-index:10}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.order-2{order:2}.order-3{order:3}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.mb-2\.5{margin-bottom:0.625rem}.mt-2{margin-top:0.5rem}.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-4{height:1rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.h-7{height:1.75rem}.max-h-48{max-height:12rem}.max-h-\[92vh\]{max-height:92vh}.min-h-screen{min-height:100vh}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-4{width:1rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.w-7{width:1.75rem}.min-w-0{min-width:0px}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-1{gap:0.25rem}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#1e2430\]{--tw-border-opacity:1;border-color:rgb(30 36 48 / var(--tw-border-opacity, 1))}.border-\[\#262d3d\]{--tw-border-opacity:1;border-color:rgb(38 45 61 / var(--tw-border-opacity, 1))}.border-\[\#2a3241\]{--tw-border-opacity:1;border-color:rgb(42 50 65 / var(--tw-border-opacity, 1))}.border-red-800{--tw-border-opacity:1;border-color:rgb(153 27 27 / var(--tw-border-opacity, 1))}.border-red-800\/60{border-color:rgb(153 27 27 / 0.6)}.border-red-800\/80{border-color:rgb(153 27 27 / 0.8)}.border-red-900\/50{border-color:rgb(127 29 29 / 0.5)}.border-red-900\/60{border-color:rgb(127 29 29 / 0.6)}.border-red-600{--tw-border-opacity:1;border-color:rgb(220 38 38 / var(--tw-border-opacity, 1))}.border-red-900\/40{border-color:rgb(127 29 29 / 0.4)}.bg-\[\#080a0e\]{--tw-bg-opacity:1;background-color:rgb(8 10 14 / var(--tw-bg-opacity, 1))}.bg-\[\#0b0e14\]\/95{background-color:rgb(11 14 20 / 0.95)}.bg-\[\#10141d\]{--tw-bg-opacity:1;background-color:rgb(16 20 29 / var(--tw-bg-opacity, 1))}.bg-\[\#12161f\]{--tw-bg-opacity:1;background-color:rgb(18 22 31 / var(--tw-bg-opacity, 1))}.bg-\[\#141821\]{--tw-bg-opacity:1;background-color:rgb(20 24 33 / var(--tw-bg-opacity, 1))}.bg-\[\#181e29\]{--tw-bg-opacity:1;background-color:rgb(24 30 41 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-black\/90{background-color:rgb(0 0 0 / 0.9)}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-950\/80{background-color:rgb(69 10 10 / 0.8)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-zinc-950\/80{background-color:rgb(9 9 11 / 0.8)}.bg-zinc-950\/90{background-color:rgb(9 9 11 / 0.9)}.bg-\[\#0b0e14\]{--tw-bg-opacity:1;background-color:rgb(11 14 20 / var(--tw-bg-opacity, 1))}.bg-\[\#161b26\]{--tw-bg-opacity:1;background-color:rgb(22 27 38 / var(--tw-bg-opacity, 1))}.bg-red-900\/40{background-color:rgb(127 29 29 / 0.4)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-zinc-100{--tw-gradient-from:#f4f4f5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(244 244 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-red-200{--tw-gradient-to:rgb(254 202 202 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #fecaca var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-red-500{--tw-gradient-to:#ef4444 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-2\.5{padding:0.625rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-1{padding:0.25rem}.px-12{padding-left:3rem;padding-right:3rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-20{padding-top:5rem;padding-bottom:5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.pb-1{padding-bottom:0.25rem}.pb-2{padding-bottom:0.5rem}.pl-9{padding-left:2.25rem}.pr-4{padding-right:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-\[0\.25em\]{letter-spacing:0.25em}.tracking-\[0\.35em\]{letter-spacing:0.35em}.tracking-wider{letter-spacing:0.05em}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500\/80{color:rgb(239 68 68 / 0.8)}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-zinc-100{--tw-text-opacity:1;color:rgb(244 244 245 / var(--tw-text-opacity, 1))}.text-zinc-200{--tw-text-opacity:1;color:rgb(228 228 231 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.text-zinc-500{--tw-text-opacity:1;color:rgb(113 113 122 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-red-400\/90{color:rgb(248 113 113 / 0.9)}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.placeholder-zinc-500::placeholder{--tw-placeholder-opacity:1;color:rgb(113 113 122 / var(--tw-placeholder-opacity, 1))}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(185\2c 28\2c 28\2c 0\.35\)\]{--tw-shadow:0 0 20px rgba(185,28,28,0.35);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_25px_rgba\(185\2c 28\2c 28\2c 0\.25\)\]{--tw-shadow:0 0 25px rgba(185,28,28,0.25);--tw-shadow-colored:0 0 25px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_30px_rgba\(185\2c 28\2c 28\2c 0\.2\)\]{--tw-shadow:0 0 30px rgba(185,28,28,0.2);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_\#ef4444\]{--tw-shadow:0 0 8px #ef4444;--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(220\2c 38\2c 38\2c 0\.25\)\]{--tw-shadow:0 0 10px rgba(220,38,38,0.25);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.selection\:bg-red-900 *::selection{--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-red-900::selection{--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-red-500:hover{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.hover\:border-red-800\/60:hover{border-color:rgb(153 27 27 / 0.6)}.hover\:border-red-600:hover{--tw-border-opacity:1;border-color:rgb(220 38 38 / var(--tw-border-opacity, 1))}.hover\:border-red-900:hover{--tw-border-opacity:1;border-color:rgb(127 29 29 / var(--tw-border-opacity, 1))}.hover\:border-red-900\/60:hover{border-color:rgb(127 29 29 / 0.6)}.hover\:bg-\[\#1a202c\]:hover{--tw-bg-opacity:1;background-color:rgb(26 32 44 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#222a38\]:hover{--tw-bg-opacity:1;background-color:rgb(34 42 56 / var(--tw-bg-opacity, 1))}.hover\:bg-red-950:hover{--tw-bg-opacity:1;background-color:rgb(69 10 10 / var(--tw-bg-opacity, 1))}.hover\:bg-red-950\/60:hover{background-color:rgb(69 10 10 / 0.6)}.hover\:bg-zinc-800:hover{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.hover\:text-red-400:hover{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-red-300:hover{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.hover\:text-zinc-200:hover{--tw-text-opacity:1;color:rgb(228 228 231 / var(--tw-text-opacity, 1))}.hover\:shadow-\[0_0_40px_rgba\(220\2c 38\2c 38\2c 0\.5\)\]:hover{--tw-shadow:0 0 40px rgba(220,38,38,0.5);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-red-700:focus{--tw-border-opacity:1;border-color:rgb(185 28 28 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.group:hover .group-hover\:border-red-500{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.group:hover .group-hover\:text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.sm\:p-6{padding:1.5rem}}@media (min-width: 1024px){.lg\:order-2{order:2}.lg\:order-3{order:3}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-6{bottom:1.5rem}.left-3{left:0.75rem}.right-6{right:1.5rem}.top-0{top:0px}.top-2\.5{top:0.625rem}.z-10{z-index:10}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.order-2{order:2}.order-3{order:3}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.mb-2\.5{margin-bottom:0.625rem}.mt-2{margin-top:0.5rem}.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-4{height:1rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.h-7{height:1.75rem}.max-h-48{max-height:12rem}.max-h-\[92vh\]{max-height:92vh}.min-h-screen{min-height:100vh}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-4{width:1rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.w-7{width:1.75rem}.min-w-0{min-width:0px}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-1{gap:0.25rem}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#1e2430\]{--tw-border-opacity:1;border-color:rgb(30 36 48 / var(--tw-border-opacity, 1))}.border-\[\#262d3d\]{--tw-border-opacity:1;border-color:rgb(38 45 61 / var(--tw-border-opacity, 1))}.border-\[\#2a3241\]{--tw-border-opacity:1;border-color:rgb(42 50 65 / var(--tw-border-opacity, 1))}.border-red-800{--tw-border-opacity:1;border-color:rgb(153 27 27 / var(--tw-border-opacity, 1))}.border-red-800\/60{border-color:rgb(153 27 27 / 0.6)}.border-red-800\/80{border-color:rgb(153 27 27 / 0.8)}.border-red-900\/50{border-color:rgb(127 29 29 / 0.5)}.border-red-900\/60{border-color:rgb(127 29 29 / 0.6)}.border-red-600{--tw-border-opacity:1;border-color:rgb(220 38 38 / var(--tw-border-opacity, 1))}.border-red-900\/40{border-color:rgb(127 29 29 / 0.4)}.bg-\[\#080a0e\]{--tw-bg-opacity:1;background-color:rgb(8 10 14 / var(--tw-bg-opacity, 1))}.bg-\[\#0b0e14\]\/95{background-color:rgb(11 14 20 / 0.95)}.bg-\[\#10141d\]{--tw-bg-opacity:1;background-color:rgb(16 20 29 / var(--tw-bg-opacity, 1))}.bg-\[\#12161f\]{--tw-bg-opacity:1;background-color:rgb(18 22 31 / var(--tw-bg-opacity, 1))}.bg-\[\#141821\]{--tw-bg-opacity:1;background-color:rgb(20 24 33 / var(--tw-bg-opacity, 1))}.bg-\[\#181e29\]{--tw-bg-opacity:1;background-color:rgb(24 30 41 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-black\/90{background-color:rgb(0 0 0 / 0.9)}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-950\/80{background-color:rgb(69 10 10 / 0.8)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-zinc-950\/80{background-color:rgb(9 9 11 / 0.8)}.bg-zinc-950\/90{background-color:rgb(9 9 11 / 0.9)}.bg-\[\#0b0e14\]{--tw-bg-opacity:1;background-color:rgb(11 14 20 / var(--tw-bg-opacity, 1))}.bg-\[\#161b26\]{--tw-bg-opacity:1;background-color:rgb(22 27 38 / var(--tw-bg-opacity, 1))}.bg-red-900\/40{background-color:rgb(127 29 29 / 0.4)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-zinc-100{--tw-gradient-from:#f4f4f5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(244 244 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-red-200{--tw-gradient-to:rgb(254 202 202 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #fecaca var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-red-500{--tw-gradient-to:#ef4444 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.p-2\.5{padding:0.625rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-1{padding:0.25rem}.px-12{padding-left:3rem;padding-right:3rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-20{padding-top:5rem;padding-bottom:5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.pb-1{padding-bottom:0.25rem}.pb-2{padding-bottom:0.5rem}.pl-9{padding-left:2.25rem}.pr-4{padding-right:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-\[0\.25em\]{letter-spacing:0.25em}.tracking-\[0\.35em\]{letter-spacing:0.35em}.tracking-wider{letter-spacing:0.05em}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500\/80{color:rgb(239 68 68 / 0.8)}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-zinc-100{--tw-text-opacity:1;color:rgb(244 244 245 / var(--tw-text-opacity, 1))}.text-zinc-200{--tw-text-opacity:1;color:rgb(228 228 231 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.text-zinc-500{--tw-text-opacity:1;color:rgb(113 113 122 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-red-400\/90{color:rgb(248 113 113 / 0.9)}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.placeholder-zinc-500::placeholder{--tw-placeholder-opacity:1;color:rgb(113 113 122 / var(--tw-placeholder-opacity, 1))}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(185\2c 28\2c 28\2c 0\.35\)\]{--tw-shadow:0 0 20px rgba(185,28,28,0.35);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_25px_rgba\(185\2c 28\2c 28\2c 0\.25\)\]{--tw-shadow:0 0 25px rgba(185,28,28,0.25);--tw-shadow-colored:0 0 25px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_30px_rgba\(185\2c 28\2c 28\2c 0\.2\)\]{--tw-shadow:0 0 30px rgba(185,28,28,0.2);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_\#ef4444\]{--tw-shadow:0 0 8px #ef4444;--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(220\2c 38\2c 38\2c 0\.25\)\]{--tw-shadow:0 0 10px rgba(220,38,38,0.25);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.selection\:bg-red-900 *::selection{--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-red-900::selection{--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-red-500:hover{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.hover\:border-red-800\/60:hover{border-color:rgb(153 27 27 / 0.6)}.hover\:border-red-600:hover{--tw-border-opacity:1;border-color:rgb(220 38 38 / var(--tw-border-opacity, 1))}.hover\:border-red-900:hover{--tw-border-opacity:1;border-color:rgb(127 29 29 / var(--tw-border-opacity, 1))}.hover\:border-red-900\/60:hover{border-color:rgb(127 29 29 / 0.6)}.hover\:bg-\[\#1a202c\]:hover{--tw-bg-opacity:1;background-color:rgb(26 32 44 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#222a38\]:hover{--tw-bg-opacity:1;background-color:rgb(34 42 56 / var(--tw-bg-opacity, 1))}.hover\:bg-red-950:hover{--tw-bg-opacity:1;background-color:rgb(69 10 10 / var(--tw-bg-opacity, 1))}.hover\:bg-red-950\/60:hover{background-color:rgb(69 10 10 / 0.6)}.hover\:bg-zinc-800:hover{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.hover\:text-red-400:hover{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-red-300:hover{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.hover\:text-zinc-200:hover{--tw-text-opacity:1;color:rgb(228 228 231 / var(--tw-text-opacity, 1))}.hover\:shadow-\[0_0_40px_rgba\(220\2c 38\2c 38\2c 0\.5\)\]:hover{--tw-shadow:0 0 40px rgba(220,38,38,0.5);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-red-700:focus{--tw-border-opacity:1;border-color:rgb(185 28 28 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.group:hover .group-hover\:border-red-500{--tw-border-opacity:1;border-color:rgb(239 68 68 / var(--tw-border-opacity, 1))}.group:hover .group-hover\:text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.sm\:p-6{padding:1.5rem}}@media (min-width: 1024px){.lg\:order-2{order:2}.lg\:order-3{order:3}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
+<body class="min-h-screen flex flex-col selection:bg-red-900 selection:text-white">
+
+    <!-- ПРИВІТАЛЬНИЙ ЕКРАН (SPLASH SCREEN З PLEXUS-АНІМАЦІЄЮ) -->
+    <div id="welcomeScreen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-500">
+        <canvas id="plexusCanvas" class="absolute inset-0 w-full h-full pointer-events-none" width="411" height="785"></canvas>
+        
+        <div class="relative z-10 flex flex-col items-center text-center px-4">
+            <div class="mb-6 p-4 rounded-2xl bg-zinc-950/80 border border-red-900/50 shadow-[0_0_30px_rgba(185,28,28,0.2)]">
+                <svg class="w-14 h-14 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"></path>
+                    <rect x="9" y="10" width="6" height="5" rx="1"></rect>
+                    <path d="M10 10V8a2 2 0 114 0v2"></path>
+                </svg>
+            </div>
+            <p class="text-xs uppercase tracking-[0.35em] text-zinc-500 mb-4">Personal Tactical Link Directory</p>
+            <button type="button" onclick="enterHub()" class="group relative px-12 py-4 rounded-xl bg-zinc-950/90 border border-red-800/80 hover:border-red-500 text-2xl font-bold tracking-wider text-zinc-200 hover:text-white shadow-[0_0_25px_rgba(185,28,28,0.25)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] transition-all duration-300">
+                <span class="bg-gradient-to-r from-zinc-100 via-red-200 to-red-500 bg-clip-text text-transparent">URLHub</span>
+                <span class="block text-[10px] font-normal tracking-[0.25em] text-red-500/80 group-hover:text-red-400 mt-1 uppercase">Увійти в систему ➔</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ВЕРХНЯ ПАНЕЛЬ (HEADER) -->
+    <header class="sticky top-0 z-30 bg-[#0b0e14]/95 backdrop-blur-md border-b border-[#1e2430] px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="showWelcome()" title="На головний екран" class="flex items-center gap-2.5 group text-left">
+                    <div class="w-9 h-9 rounded-lg bg-[#141821] border border-red-900/60 group-hover:border-red-500 flex items-center justify-center transition">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_8px_#ef4444]"></span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold tracking-wider text-zinc-100 group-hover:text-red-400 transition">
+                            URL<span class="text-red-600">Hub</span>
+                        </h1>
+                    </div>
+                </button>
+                <span id="unsavedBadge" class="text-[11px] bg-red-950/80 text-red-300 border border-red-800/60 px-2.5 py-0.5 rounded-full hidden">
+                    ● Не збережено у файл
+                </span>
+            </div>
+
+            <!-- Пошук -->
+            <div class="flex-1 max-w-md mx-auto w-full order-3 lg:order-2">
+                <div class="relative">
+                    <input type="text" id="searchInput" oninput="renderBookmarks()" placeholder="Пошук ресурсу, опису або URL..." class="w-full bg-[#12161f] border border-[#262d3d] rounded-lg pl-9 pr-4 py-1.5 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-red-700 transition">
+                    <svg class="w-4 h-4 text-zinc-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Кнопки управління -->
+            <div class="flex items-center gap-2 order-2 lg:order-3">
+                <button type="button" onclick="saveSelfContainedHTML()" title="Завантажити оновлений файл URLHub.html" class="cyber-btn-red px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5">
+                    <span>💾</span> <span>Зберегти HTML</span>
+                </button>
+                <button type="button" onclick="toggleView()" id="viewToggleBtn" title="Змінити вигляд (Плитка / Детально)" class="px-2.5 py-1.5 bg-[#12161f] hover:bg-[#1a202c] border border-[#262d3d] hover:border-red-800/60 rounded-lg text-xs text-zinc-300 transition">
+                    🔳 Плитка
+                </button>
+                <button type="button" onclick="exportJSON()" title="Експорт бази в JSON" class="px-2.5 py-1.5 bg-[#12161f] hover:bg-[#1a202c] border border-[#262d3d] hover:border-red-800/60 rounded-lg text-xs text-zinc-300 transition">
+                    ⬇️ JSON
+                </button>
+                <label title="Імпорт бази з JSON" class="px-2.5 py-1.5 bg-[#12161f] hover:bg-[#1a202c] border border-[#262d3d] hover:border-red-800/60 rounded-lg text-xs text-zinc-300 cursor-pointer transition">
+                    ⬆️ Імпорт
+                    <input type="file" id="importFile" accept=".json" onchange="importJSON(event)" class="hidden">
+                </label>
+            </div>
+        </div>
+
+        <!-- Фільтр категорій -->
+        <div class="max-w-7xl mx-auto mt-3 flex items-center gap-2 overflow-x-auto pb-1" id="categoryFilter"></div>
+    </header>
+
+    <!-- ОСНОВНИЙ КОНТЕНТ -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+        <div id="bookmarksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+        <!-- Пустий стан -->
+        <div id="emptyState" class="text-center py-20">
+            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-[#12161f] border border-[#262d3d] flex items-center justify-center text-zinc-500">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle><path d="M12 12L16.5 7.5"></path><circle cx="12" cy="12" r="4"></circle>
+                </svg>
+            </div>
+            <h2 class="text-base font-medium text-zinc-300">Вузлів не знайдено</h2>
+            <p class="text-xs text-zinc-500 mt-1">Додайте нову закладку кнопкою «+» або змініть фільтр</p>
+        </div>
+    </main>
+
+    <!-- ПЛАВАЮЧА КНОПКА (+) -->
+    <button type="button" onclick="openModal()" title="Додати нову закладку" class="fixed bottom-6 right-6 w-14 h-14 rounded-2xl bg-[#141821] hover:bg-red-950 border-2 border-red-800 hover:border-red-500 text-red-400 hover:text-white shadow-[0_0_20px_rgba(185,28,28,0.35)] flex items-center justify-center text-3xl font-light transition transform hover:scale-105 z-40">
+        +
+    </button>
+
+    <!-- МОДАЛЬНЕ ВІКНО ДОДАВАННЯ / РЕДАГУВАННЯ -->
+    <div id="formModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-[#10141d] border border-[#2a3241] rounded-2xl max-w-lg w-full p-5 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-[#1e2430]">
+                <h3 id="modalTitle" class="text-base font-semibold text-zinc-100">Новий вузол URLHub</h3>
+                <button type="button" onclick="closeModal()" class="text-zinc-500 hover:text-red-400 text-2xl leading-none">×</button>
+            </div>
+
+            <form id="bookmarkForm" onsubmit="saveBookmark(event)" class="space-y-4">
+                <input type="hidden" id="bookmarkId">
+                <input type="hidden" id="bmIcon" value="shield-lock">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Назва *</label>
+                        <input type="text" id="bmTitle" required="" placeholder="Напр: OSINT Framework" class="w-full bg-[#080a0e] border border-[#262d3d] rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-red-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Категорія *</label>
+                        <input type="text" id="bmCategory" list="categoryList" required="" placeholder="OSINT, Мережі, Інструменти..." class="w-full bg-[#080a0e] border border-[#262d3d] rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-red-700">
+                        <datalist id="categoryList"></datalist>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">URL-адреса *</label>
+                    <input type="url" id="bmUrl" required="" placeholder="https://..." class="w-full bg-[#080a0e] border border-[#262d3d] rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-red-700">
+                </div>
+
+                <!-- Вибір векторної іконки як на 245.jpg -->
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1.5">Оберіть тактичну іконку:</label>
+                    <div class="grid grid-cols-5 sm:grid-cols-5 gap-2 bg-[#080a0e] p-2.5 rounded-xl border border-[#1e2430] max-h-48 overflow-y-auto" id="iconPicker"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-zinc-400 mb-1">Опис / Нотатки</label>
+                    <textarea id="bmDesc" rows="2" placeholder="Короткий опис призначення..." class="w-full bg-[#080a0e] border border-[#262d3d] rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-red-700 resize-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2 border-t border-[#1e2430]">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg text-xs bg-[#181e29] hover:bg-[#222a38] text-zinc-300 transition">Скасувати</button>
+                    <button type="submit" class="cyber-btn-red px-5 py-2 rounded-lg text-xs font-semibold">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО WEBVIEW -->
+    <div id="webviewModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden flex-col z-50">
+        <div class="bg-[#10141d] border-b border-[#262d3d] px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3 truncate">
+                <span class="w-2 h-2 rounded-full bg-red-600"></span>
+                <span id="wvTitle" class="font-medium text-sm text-zinc-200 truncate">Перегляд</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a id="wvExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="cyber-btn-red text-xs px-3 py-1 rounded-md">
+                    Відкрити у браузері ↗
+                </a>
+                <button type="button" onclick="closeWebview()" class="text-zinc-400 hover:text-red-400 text-2xl leading-none">×</button>
+            </div>
+        </div>
+        <iframe id="wvFrame" class="w-full flex-1 bg-white" src="about:blank"></iframe>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'urlhub_bookmarks_v2';
+
+        // Векторна бібліотека іконок у стилі 245.jpg
+        const CYBER_ICONS = {
+            'shield-lock': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2L4 6v6c0 5.5 3.4 10.6 8 12 4.6-1.4 8-6.5 8-12V6l-8-4z"/><rect x="9" y="11" width="6" height="5" rx="1" fill="currentColor" fill-opacity="0.2"/><path d="M10 11V9a2 2 0 114 0v2"/></svg>`,
+            'bug-wrench': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="7" width="10" height="12" rx="5"/><path d="M9 7V5a3 3 0 016 0v2M3 10h4M17 10h4M4 15l3-1M20 15l-3-1M4 6l3 2M20 6l-3 2M12 7v12"/><circle cx="16.5" cy="16.5" r="3.5" fill="#12161f"/><path d="M15.5 15.5l2 2"/></svg>`,
+            'radar': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 3v18M3 12h18M12 12l6.3-6.3"/></svg>`,
+            'monitor-bomb': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="11" cy="11" r="3" fill="currentColor" fill-opacity="0.25"/><path d="M13.5 8.5L15 7m1-1l.5-.5"/></svg>`,
+            'monitor-health': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 10h3l1.5-3 3 6 1.5-3h3"/></svg>`,
+            'agent-search': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9h12l-1.5-4.5h-9L6 9zM4 9h16"/><circle cx="9.5" cy="12" r="1.5"/><circle cx="14.5" cy="12" r="1.5"/><path d="M11 12h2M5 20c0-3 3.5-5 7-5 1.5 0 3 .4 4.2 1"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M19.5 19.5L21 21"/></svg>`,
+            'server-shield': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="14" height="4" rx="1"/><rect x="3" y="10" width="11" height="4" rx="1"/><rect x="3" y="16" width="11" height="4" rx="1"/><circle cx="6" cy="6" r="0.8" fill="currentColor"/><circle cx="6" cy="12" r="0.8" fill="currentColor"/><path d="M17 11l4 1.8v3.5c0 2.8-1.7 5.2-4 6.2-2.3-1-4-3.4-4-6.2v-3.5L17 11z"/></svg>`,
+            'agent': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9h12l-1.5-4.5h-9L6 9zM3 9h18"/><circle cx="9.5" cy="12.5" r="1.5"/><circle cx="14.5" cy="12.5" r="1.5"/><path d="M11 12.5h2M9 15.5c1.5.8 4.5.8 6 0M4 21c0-3.3 3.6-5 8-5s8 1.7 8 5"/></svg>`,
+            'monitor-check': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 10l2 2 4-4"/></svg>`,
+            'globe-lock': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 10-9 9"/><path d="M3.6 9h16.8M3.6 15h6.9M12 3a14 14 0 000 18M12 3a14 14 0 014 9"/><rect x="14" y="15" width="7" height="6" rx="1"/><path d="M15.5 15v-1.5a2 2 0 114 0V15"/></svg>`,
+            'wifi-lock': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 10a10 10 0 0114 0M8 13a6 6 0 018 0"/><rect x="8" y="15" width="8" height="6" rx="1.5"/><path d="M10 15v-2a2 2 0 114 0v2"/></svg>`,
+            'phone-shield': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="2" width="11" height="20" rx="2"/><path d="M9 19h3"/><path d="M16 9l4 1.8v3.7c0 3-1.8 5.5-4 6.5-2.2-1-4-3.5-4-6.5v-3.7L16 9z" fill="#12161f"/></svg>`,
+            'firewall': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h10v12H3zM3 10h10M3 14h10M8 6v4M6 10v4M8 14v4"/><path d="M16.5 19c2.5 0 4.5-2 4.5-4.8 0-3-2.5-5.5-3.5-7.2-.5 2-2 3-2 3s-1-1.5-1.5-3C12.5 9 12 11.5 12 14.2c0 2.8 2 4.8 4.5 4.8z" fill="currentColor" fill-opacity="0.2"/></svg>`,
+            'browser-shield': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M6 6h.01M8.5 6h.01"/><path d="M12 10l4 1.8v3.2c0 2.5-1.7 4.7-4 5.5-2.3-.8-4-3-4-5.5v-3.2L12 10z"/></svg>`,
+            'monitor-search': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="11" cy="9.5" r="2.5"/><path d="M13 11.5l2.5 2.5"/></svg>`,
+            'bug': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M9 7V5a3 3 0 016 0v2M3 11h4M17 11h4M4 16l3-1.5M20 16l-3-1.5M4 6l3 2M20 6l-3 2M12 7v13"/></svg>`,
+            'cloud-sync': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6.5 19a4.5 4.5 0 01-.4-8.98 6 6 0 0111.8-1.02A4 4 0 0118 19H6.5z"/><path d="M10 13l-2 2 2 2M14 17l2-2-2-2"/></svg>`,
+            'user-lock': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="8" r="4"/><path d="M3 20c0-3.5 3-6 7-6s7 2.5 7 6"/><rect x="15" y="11" width="6" height="5" rx="1"/><path d="M16.5 11V9.5a1.5 1.5 0 013 0V11"/></svg>`,
+            'cloud-lock': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 18a4 4 0 01-.4-7.98 5.5 5.5 0 0110.8-1A3.5 3.5 0 0117 16"/><rect x="9" y="14" width="6" height="5" rx="1"/><path d="M10.5 14v-1.5a1.5 1.5 0 013 0V14"/></svg>`,
+            'shield-signal': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 3L4 6.5v5.5c0 5 3 9.6 7 11 4-1.4 7-6 7-11V6.5L11 3z"/><path d="M8.5 12l2 2 3.5-3.5"/><path d="M18 3a6 6 0 013 5M20 1a9 9 0 014 7"/></svg>`
+        };
+
+        // Вбудована база даних (автоматично перезаписується при натисканні "Зберегти HTML")
+        /*__BOOKMARKS_START__*/
+        const EMBEDDED_DATA = [];
+        /*__BOOKMARKS_END__*/
+
+        let bookmarks = [];
+        let currentCategory = 'Всі';
+        let isTileMode = false; // Перемикач: Картки з описом або Чиста плитка іконок як на 245.jpg
+        let plexusAnimId = null;
+
+        function safeGetStorage() {
+            try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+        }
+        function safeSetStorage(val) {
+            try { localStorage.setItem(STORAGE_KEY, val); } catch (e) {}
+        }
+
+        function getIconSVG(key, sizeClass = "w-7 h-7") {
+            const raw = CYBER_ICONS[key] || CYBER_ICONS['shield-lock'];
+            return raw.replace('<svg ', `<svg class="${sizeClass} text-slate-300 group-hover:text-red-400 transition-colors" `);
+        }
+
+        // --- АНІМАЦІЯ PLEXUS (ЯК НА 246.GIF) ---
+        function startPlexusAnimation() {
+            const canvas = document.getElementById('plexusCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w = canvas.width = window.innerWidth;
+            let h = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            });
+
+            const nodes = [];
+            const count = 65;
+            for (let i = 0; i < count; i++) {
+                // Щільне ядро в центрі + розріджені гілки навколо
+                const isCore = i < 28;
+                const radius = isCore ? Math.random() * 95 : 95 + Math.random() * 190;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                nodes.push({
+                    x: radius * Math.sin(phi) * Math.cos(theta),
+                    y: radius * Math.sin(phi) * Math.sin(theta),
+                    z: radius * Math.cos(phi),
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    vz: (Math.random() - 0.5) * 0.35,
+                    isCore
+                });
+            }
+
+            let angleY = 0;
+            let angleX = 0;
+
+            function animate() {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, w, h);
+
+                angleY += 0.004;
+                angleX += 0.002;
+                const cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+                const cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+
+                // Фонове червоне світіння ядра
+                const grad = ctx.createRadialGradient(w / 2, h / 2, 5, w / 2, h / 2, 180);
+                grad.addColorStop(0, 'rgba(220, 20, 20, 0.22)');
+                grad.addColorStop(0.5, 'rgba(140, 10, 10, 0.06)');
+                grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+
+                const projected = nodes.map(n => {
+                    n.x += n.vx; n.y += n.vy; n.z += n.vz;
+                    const maxR = n.isCore ? 100 : 280;
+                    const dist = Math.hypot(n.x, n.y, n.z);
+                    if (dist > maxR) { n.vx *= -1; n.vy *= -1; n.vz *= -1; }
+
+                    let x1 = n.x * cosY - n.z * sinY;
+                    let z1 = n.z * cosY + n.x * sinY;
+                    let y1 = n.y * cosX - z1 * sinX;
+                    let z2 = z1 * cosX + n.y * sinX;
+
+                    const scale = 420 / (420 + z2);
+                    return {
+                        px: w / 2 + x1 * scale,
+                        py: h / 2 + y1 * scale,
+                        z: z2,
+                        isCore: n.isCore
+                    };
+                });
+
+                // Малюємо з'єднання
+                for (let i = 0; i < projected.length; i++) {
+                    for (let j = i + 1; j < projected.length; j++) {
+                        const dx = projected[i].px - projected[j].px;
+                        const dy = projected[i].py - projected[j].py;
+                        const d = Math.hypot(dx, dy);
+                        const maxDist = (projected[i].isCore && projected[j].isCore) ? 95 : 125;
+
+                        if (d < maxDist) {
+                            const alpha = (1 - d / maxDist) * (projected[i].isCore ? 0.85 : 0.45);
+                            ctx.strokeStyle = `rgba(225, 25, 25, ${alpha})`;
+                            ctx.lineWidth = projected[i].isCore ? 1.2 : 0.7;
+                            ctx.beginPath();
+                            ctx.moveTo(projected[i].px, projected[i].py);
+                            ctx.lineTo(projected[j].px, projected[j].py);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Малюємо вузли
+                projected.forEach(p => {
+                    ctx.fillStyle = p.isCore ? '#ff2a2a' : '#b91c1c';
+                    ctx.beginPath();
+                    ctx.arc(p.px, p.py, p.isCore ? 2.2 : 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    if (Math.random() > 0.7) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(p.px - 0.5, p.py - 0.5, 1.2, 1.2);
+                    }
+                });
+
+                plexusAnimId = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function enterHub() {
+            const ws = document.getElementById('welcomeScreen');
+            ws.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                ws.classList.add('hidden');
+                if (plexusAnimId) cancelAnimationFrame(plexusAnimId);
+            }, 450);
+        }
+
+        function showWelcome() {
+            const ws = document.getElementById('welcomeScreen');
+            ws.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+            startPlexusAnimation();
+        }
+
+        // --- ОСНОВНА ЛОГІКА ДОДАТКУ ---
+        function initApp() {
+            loadData();
+            initIconPicker();
+            renderCategories();
+            renderBookmarks();
+            startPlexusAnimation();
+        }
+
+        function initIconPicker() {
+            const container = document.getElementById('iconPicker');
+            const selectedKey = document.getElementById('bmIcon').value || 'shield-lock';
+            container.innerHTML = Object.keys(CYBER_ICONS).map(key => `
+                <button type="button" onclick="selectIcon('${key}')" data-icon="${key}"
+                    class="icon-option cyber-icon-box p-2.5 flex items-center justify-center hover:border-red-600 ${key === selectedKey ? 'selected' : ''}">
+                    ${getIconSVG(key, 'w-7 h-7')}
+                </button>
+            `).join('');
+        }
+
+        function selectIcon(key) {
+            document.getElementById('bmIcon').value = key;
+            document.querySelectorAll('.icon-option').forEach(btn => {
+                btn.classList.toggle('selected', btn.getAttribute('data-icon') === key);
+            });
+        }
+
+        function loadData() {
+            const saved = safeGetStorage();
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) bookmarks = parsed;
+                } catch (e) { bookmarks = []; }
+            }
+            if (!bookmarks || bookmarks.length === 0) {
+                bookmarks = JSON.parse(JSON.stringify(EMBEDDED_DATA));
+                safeSetStorage(JSON.stringify(bookmarks));
+            }
+        }
+
+        function saveData(markDirty = true) {
+            safeSetStorage(JSON.stringify(bookmarks));
+            if (markDirty) {
+                document.getElementById('unsavedBadge').classList.remove('hidden');
+            }
+            renderCategories();
+            renderBookmarks();
+        }
+
+        function renderCategories() {
+            const categories = ['Всі', ...new Set(bookmarks.map(b => (b.category || '').trim()).filter(Boolean))];
+            const filterContainer = document.getElementById('categoryFilter');
+            filterContainer.innerHTML = categories.map(cat => {
+                const active = cat === currentCategory 
+                    ? 'bg-red-900/40 text-red-200 border border-red-600 shadow-[0_0_10px_rgba(220,38,38,0.25)] font-medium' 
+                    : 'bg-[#12161f] text-zinc-400 hover:text-zinc-200 border border-[#262d3d] hover:border-red-900/60';
+                return `<button type="button" onclick="setCategory('${escapeHTML(cat)}')" class="px-3.5 py-1 rounded-lg text-xs whitespace-nowrap transition ${active}">${escapeHTML(cat)}</button>`;
+            }).join('');
+
+            const datalist = document.getElementById('categoryList');
+            datalist.innerHTML = categories.filter(c => c !== 'Всі').map(c => `<option value="${escapeHTML(c)}">`).join('');
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderCategories();
+            renderBookmarks();
+        }
+
+        function toggleView() {
+            isTileMode = !isTileMode;
+            const btn = document.getElementById('viewToggleBtn');
+            const container = document.getElementById('bookmarksContainer');
+            if (isTileMode) {
+                btn.innerHTML = '📋 Картки';
+                container.className = 'grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4';
+            } else {
+                btn.innerHTML = '🔳 Плитка';
+                container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+            }
+            renderBookmarks();
+        }
+
+        function renderBookmarks() {
+            const container = document.getElementById('bookmarksContainer');
+            const emptyState = document.getElementById('emptyState');
+            const query = (document.getElementById('searchInput').value || '').toLowerCase();
+
+            const filtered = bookmarks.filter(b => {
+                const matchesCat = currentCategory === 'Всі' || b.category === currentCategory;
+                const matchesQuery = (b.title || '').toLowerCase().includes(query) || 
+                                     (b.desc || '').toLowerCase().includes(query) || 
+                                     (b.url || '').toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Компактний режим іконок як на 245.jpg
+            if (isTileMode) {
+                container.innerHTML = filtered.map(b => `
+                    <div class="cyber-card p-4 flex flex-col items-center text-center justify-between group relative">
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                            <button type="button" onclick="editBookmark('${b.id}')" class="p-1 text-xs bg-[#0b0e14] rounded border border-[#262d3d] hover:border-red-600">✏️</button>
+                            <button type="button" onclick="deleteBookmark('${b.id}')" class="p-1 text-xs bg-[#0b0e14] rounded border border-[#262d3d] hover:border-red-600">🗑️</button>
+                        </div>
+                        <a href="${escapeHTML(b.url)}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center w-full py-2">
+                            <div class="cyber-icon-box w-20 h-20 flex items-center justify-center mb-3">
+                                ${getIconSVG(b.icon, 'w-11 h-11')}
+                            </div>
+                            <span class="font-semibold text-sm text-zinc-200 group-hover:text-red-400 transition truncate w-full">${escapeHTML(b.title)}</span>
+                            <span class="text-[10px] text-zinc-500 mt-0.5">${escapeHTML(b.category)}</span>
+                        </a>
+                    </div>
+                `).join('');
+                return;
+            }
+
+            // Повний режим карток з описом
+            container.innerHTML = filtered.map(b => `
+                <div class="cyber-card p-4 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-2.5">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="cyber-icon-box w-14 h-14 flex items-center justify-center shrink-0">
+                                    ${getIconSVG(b.icon, 'w-8 h-8')}
+                                </div>
+                                <div class="truncate">
+                                    <a href="${escapeHTML(b.url)}" target="_blank" rel="noopener noreferrer" 
+                                        class="font-semibold text-zinc-100 group-hover:text-red-400 transition truncate block">
+                                        ${escapeHTML(b.title)}
+                                    </a>
+                                    <span class="text-xs text-zinc-500 truncate block">${escapeHTML(b.url)}</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-[#161b26] text-red-400/90 px-2 py-0.5 rounded border border-red-900/40 shrink-0">
+                                ${escapeHTML(b.category)}
+                            </span>
+                        </div>
+                        <p class="text-xs text-zinc-400 line-clamp-2 mt-2 mb-4">${escapeHTML(b.desc || 'Без опису')}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-[#1e2430] text-xs">
+                        <div class="flex items-center gap-2">
+                            <a href="${escapeHTML(b.url)}" target="_blank" rel="noopener noreferrer" 
+                                class="text-red-400 hover:text-red-300 font-medium flex items-center gap-1">
+                                Відкрити ↗
+                            </a>
+                            <button type="button" onclick="openWebview('${escapeHTML(b.url)}', '${escapeHTML(b.title)}')" 
+                                class="text-zinc-400 hover:text-zinc-200 px-2 py-0.5 rounded bg-[#0b0e14] border border-[#262d3d] hover:border-red-900">
+                                👁️ WebView
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="editBookmark('${b.id}')" title="Редагувати" class="p-1 hover:bg-zinc-800 rounded">✏️</button>
+                            <button type="button" onclick="deleteBookmark('${b.id}')" title="Видалити" class="p-1 hover:bg-red-950/60 text-red-400 rounded">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(editId = null) {
+            const modal = document.getElementById('formModal');
+            const form = document.getElementById('bookmarkForm');
+            form.reset();
+
+            if (editId) {
+                const bm = bookmarks.find(b => b.id === editId);
+                if (bm) {
+                    document.getElementById('modalTitle').textContent = 'Редагувати вузол';
+                    document.getElementById('bookmarkId').value = bm.id;
+                    document.getElementById('bmUrl').value = bm.url;
+                    document.getElementById('bmTitle').value = bm.title;
+                    document.getElementById('bmIcon').value = CYBER_ICONS[bm.icon] ? bm.icon : 'shield-lock';
+                    document.getElementById('bmCategory').value = bm.category;
+                    document.getElementById('bmDesc').value = bm.desc;
+                }
+            } else {
+                document.getElementById('modalTitle').textContent = 'Новий вузол URLHub';
+                document.getElementById('bookmarkId').value = '';
+                document.getElementById('bmIcon').value = 'shield-lock';
+                if (currentCategory !== 'Всі') {
+                    document.getElementById('bmCategory').value = currentCategory;
+                }
+            }
+
+            initIconPicker();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('formModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveBookmark(e) {
+            e.preventDefault();
+            const id = document.getElementById('bookmarkId').value;
+            const newBm = {
+                id: id || Date.now().toString(),
+                url: document.getElementById('bmUrl').value.trim(),
+                title: document.getElementById('bmTitle').value.trim(),
+                icon: document.getElementById('bmIcon').value.trim() || 'shield-lock',
+                category: document.getElementById('bmCategory').value.trim(),
+                desc: document.getElementById('bmDesc').value.trim()
+            };
+
+            if (id) {
+                const idx = bookmarks.findIndex(b => b.id === id);
+                if (idx > -1) bookmarks[idx] = newBm;
+            } else {
+                bookmarks.unshift(newBm);
+            }
+
+            saveData(true);
+            closeModal();
+        }
+
+        function editBookmark(id) { openModal(id); }
+
+        function deleteBookmark(id) {
+            if (confirm('Видалити цей вузол із бази URLHub?')) {
+                bookmarks = bookmarks.filter(b => b.id !== id);
+                saveData(true);
+            }
+        }
+
+        function openWebview(url, title) {
+            const modal = document.getElementById('webviewModal');
+            document.getElementById('wvTitle').textContent = title;
+            document.getElementById('wvExternalLink').href = url;
+            document.getElementById('wvFrame').src = url;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeWebview() {
+            const modal = document.getElementById('webviewModal');
+            document.getElementById('wvFrame').src = 'about:blank';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // --- ЗБЕРЕЖЕННЯ ОНОВЛЕНОГО HTML ТА JSON ---
+        async function saveSelfContainedHTML() {
+            const ws = document.getElementById('welcomeScreen');
+            const wasHidden = ws.classList.contains('hidden');
+
+            // Готуємо чистий стан перед знімком DOM
+            ws.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+            document.getElementById('bookmarksContainer').innerHTML = '';
+            document.getElementById('categoryFilter').innerHTML = '';
+            document.getElementById('iconPicker').innerHTML = '';
+            document.getElementById('unsavedBadge').classList.add('hidden');
+
+            let htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+            // Повертаємо поточний інтерфейс
+            if (wasHidden) ws.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+            initIconPicker();
+            renderCategories();
+            renderBookmarks();
+
+            const dataString = JSON.stringify(bookmarks, null, 4);
+            const replacement = `/*__BOOKMARKS_START__*/\n        const EMBEDDED_DATA = ${dataString};\n        /*__BOOKMARKS_END__*/`;
+            htmlContent = htmlContent.replace(/\/\*__BOOKMARKS_START__\*\/[\s\S]*?\/\*__BOOKMARKS_END__\*\//, replacement);
+
+            safeSetStorage(JSON.stringify(bookmarks));
+
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: 'URLHub.html',
+                        types: [{ description: 'URLHub Application', accept: { 'text/html': ['.html'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(htmlContent);
+                    await writable.close();
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'URLHub.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportJSON() {
+            const dataStr = JSON.stringify(bookmarks, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().slice(0, 10);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `urlhub_backup_${date}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`Знайдено записів: ${imported.length}. Замінити поточну базу (ОК) чи об'єднати (Скасувати)?`)) {
+                            bookmarks = imported;
+                        } else {
+                            const existingIds = new Set(bookmarks.map(b => b.id));
+                            imported.forEach(item => {
+                                if (!existingIds.has(item.id)) bookmarks.push(item);
+                            });
+                        }
+                        saveData(true);
+                        alert('Базу URLHub оновлено! Натисніть "💾 Зберегти HTML", щоб зафіксувати її у файлі.');
+                    }
+                } catch (err) {
+                    alert('Помилка читання JSON-файлу.');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function escapeHTML(str) {
+            return String(str || '').replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
+        }
+
+        initApp();
+    </script>
+
+</body></html>
